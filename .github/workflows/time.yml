@@ -23,7 +23,7 @@ jobs:
         id: block
         with:
           timezone: Africa/Cairo
-          after: "11:40, 16:00 on Thursday"
+          after: "11:42, 16:00 on Thursday"
           before: 09:00
           commit-status-description-while-blocking: "🚫 Its after work hours. Merging blocked."
       - run: echo pr-blocked=${{ steps.block.outputs.pr-blocked }}
