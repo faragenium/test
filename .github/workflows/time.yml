@@ -26,7 +26,7 @@ jobs:
         DEPLOY_START_HOUR: 12
         DEPLOY_END_HOUR: 12
         DEPLOY_START_MINUTE: 0
-        DEPLOY_END_MINUTE: 2
+        DEPLOY_END_MINUTE: 5
       run: |
         # Set timezone
         sudo timedatectl set-timezone $TIMEZONE
