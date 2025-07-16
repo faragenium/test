@@ -1,0 +1,71 @@
+name: Enforce No-Merge Window
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - labeled
+      - unlabeled
+  workflow_dispatch
+  schedule:
+    - cron: '0/5 * * * *'
+
+jobs:
+  no-merge-window:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      statuses: write
+
+    steps:
+      - name: Fetch PR labels
+        id: labels
+        uses: actions/github-script@v7
+        with:
+          script: |
+
+            if(!context.payload.pull_request) {
+              core.setOutput("bypass", true);
+              return;
+            }
+
+            const pr = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number
+            });
+
+            const labels = pr.data.labels.map(label => label.name);
+            console.log("Labels:", labels);
+
+            const bypass = labels.includes("urgent");
+            core.setOutput("bypass", bypass);
+
+      - name: Check current UTC time
+        id: check_time
+        run: |
+          HOUR=$(date -u +"%H")      # 00 to 23
+          MINUTE=$(date -u +"%M")    # 00 to 59
+          echo "Current UTC Time: $HOUR:$MINUTE"
+
+          BLOCKED=0
+
+          if [ "$HOUR" -lt 8 ] || [ "$HOUR" -ge 26 ]; then
+            BLOCKED=1
+          fi
+
+          echo "BLOCKED=$BLOCKED" >> $GITHUB_ENV
+
+      - name: Set failing status if within no-merge window and no bypass
+        run: |
+          if [ "${{ steps.labels.outputs.bypass }}" = "true" ]; then
+            echo "✅ Bypass label found. Merge allowed."
+          elif [ "$BLOCKED" -eq 1 ]; then
+            echo "⛔ Merges are blocked between 6:00 and 13:00 UTC and no bypass label present."
+            exit 1
+          else
+            echo "✅ Merges are allowed between 6:00 and 13:00 UTC."
+          fi
