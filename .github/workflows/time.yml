@@ -23,7 +23,7 @@ jobs:
         id: block
         with:
           timezone: Africa/Cairo
-          after: "12:12"
+          after: "12:13"
           before: "09:00"
           base-branches: "(default)"
           prohibited-days-dates: "Sunday, 2021-10-01, 2021-12-29/2022-01-04, H:United States, BH:United States"
