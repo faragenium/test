@@ -23,31 +23,18 @@ jobs:
     - name: Check deployment window
       env:
         TIMEZONE: Africa/Cairo
-        DEPLOY_START_HOUR: 12
-        DEPLOY_END_HOUR: 12
-        DEPLOY_START_MINUTE: 0
-        DEPLOY_END_MINUTE: 5
+
       run: |
-        # Set timezone
-        sudo timedatectl set-timezone $TIMEZONE
-        
-        CURRENT_HOUR=$(date +%H)
-        CURRENT_DAY=$(date +%u)
-        CURRENT_TIME=$(date '+%A %B %d, %Y at %H:%M %Z')
-        
-        echo "Current time: $CURRENT_TIME"
-        echo "Event: ${{ github.event_name }}"
-        
-        # Check if current time is in deployment window
-        if echo "$ALLOWED_DAYS" | grep -q "$CURRENT_DAY"; then
-          if [ "$CURRENT_HOUR" -ge $DEPLOY_START_HOUR ] && [ "$CURRENT_HOUR" -lt $DEPLOY_END_HOUR ] && [ "$CURRENT_MINUTE" -ge $DEPLOY_START_MINUTE ] && [ "$CURRENT_MINUTE" -le $DEPLOY_END_MINUTE ]; then
-            IN_WINDOW=true
-          else
-            IN_WINDOW=false
-          fi
-        else
+          HOUR=$(date -u +"%H")      # 00 to 23
+          MINUTE=$(date -u +"%M")    # 00 to 59
+          echo "Current UTC Time: $HOUR:$MINUTE"
+
           IN_WINDOW=false
-        fi
+
+          if [ "$HOUR" -ge 9 ] && [ "$HOUR" -lt 9 ] && [ "$MINUTE" -ge 0 ] && [ "$MINUTE" -lt 7 ]; then
+            IN_WINDOW=true
+          fi
+
         
         if [ "${{ github.event_name }}" = "push" ]; then
           # Validate completed merge
