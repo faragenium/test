@@ -23,8 +23,8 @@ jobs:
     - name: Check deployment window
       env:
         TIMEZONE: Africa/Cairo
-        DEPLOY_START_HOUR: 13
-        DEPLOY_END_HOUR: 14
+        DEPLOY_START_HOUR: 12
+        DEPLOY_END_HOUR: 13
       run: |
         # Set timezone
         sudo timedatectl set-timezone $TIMEZONE
