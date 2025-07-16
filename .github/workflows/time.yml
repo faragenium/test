@@ -53,7 +53,8 @@ jobs:
 
           BLOCKED=0
 
-          if [ "$HOUR" -lt 8 ] || [ "$HOUR" -ge 26 ]; then
+          # check if the time is after 8:30 and before 9:00
+          if [ "$HOUR" -gt 8 ] && [ "$HOUR" -lt 9 ] && [ "$MINUTE" -gt 31 ]; then
             BLOCKED=1
           fi
 
