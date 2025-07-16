@@ -24,7 +24,9 @@ jobs:
       env:
         TIMEZONE: Africa/Cairo
         DEPLOY_START_HOUR: 12
-        DEPLOY_END_HOUR: 13
+        DEPLOY_END_HOUR: 12
+        DEPLOY_START_MINUTE: 0
+        DEPLOY_END_MINUTE: 1
       run: |
         # Set timezone
         sudo timedatectl set-timezone $TIMEZONE
@@ -38,7 +40,7 @@ jobs:
         
         # Check if current time is in deployment window
         if echo "$ALLOWED_DAYS" | grep -q "$CURRENT_DAY"; then
-          if [ "$CURRENT_HOUR" -ge $DEPLOY_START_HOUR ] && [ "$CURRENT_HOUR" -lt $DEPLOY_END_HOUR ]; then
+          if [ "$CURRENT_HOUR" -ge $DEPLOY_START_HOUR ] && [ "$CURRENT_HOUR" -lt $DEPLOY_END_HOUR ] && [ "$CURRENT_MINUTE" -ge $DEPLOY_START_MINUTE ] && [ "$CURRENT_MINUTE" -lt $DEPLOY_END_MINUTE ]; then
             IN_WINDOW=true
           else
             IN_WINDOW=false
